@@ -12,7 +12,7 @@ import retrofit2.http.Query
 interface ShiftApiService {
     @GET("api/search.php")
     suspend fun searchEvents(
-        @Query("q") query: String = "",
+        @Query("q") query: String = "%",
         @Query("l") limit: Int = 50,
         @Query("o") offset: Int = 0
     ): ShiftResponse

@@ -13,7 +13,9 @@
 - [x] Main Integration
     - [x] Update `MainActivity.kt` to support switching between Native and Web views
     - [x] Add navigation or toggle UI
+- [x] Fix HTTP 400 Error in Daily List
+    - [x] Identify API requirement for non-empty `q` parameter
+    - [x] Update `ShiftApiService.kt` to use `%` as default query
+    - [x] Add empty state handling to `EventListScreen.kt`
 - [x] Verification
     - [x] Verify build
-    - [x] Verify API data fetching (Build successful, manual check needed)
-    - [x] Verify Google Calendar export (Build successful, manual check needed)

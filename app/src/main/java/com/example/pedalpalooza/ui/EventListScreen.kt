@@ -52,6 +52,11 @@ fun EventListScreen(
                 color = Color.Red,
                 modifier = Modifier.align(Alignment.Center).padding(16.dp)
             )
+        } else if (events.isEmpty()) {
+            Text(
+                text = "No upcoming events found.",
+                modifier = Modifier.align(Alignment.Center)
+            )
         } else {
             val groupedEvents = events.groupBy { it.date ?: "Upcoming" }
 
