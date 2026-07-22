@@ -1,33 +1,54 @@
-# Add Custom Bike Logo
+# Custom Native Calendar UI with Google Calendar Integration
 
-Replace the default Android launcher icons with a custom bike-themed logo.
+Transition from a simple web wrapper to a native experience with a clean daily list view and calendar export functionality.
 
 ## User Review Required
 
 > [!NOTE]
-> I will replace the default "Android" foreground with a stylized bike icon.
-> If you have a specific `.png` or `.svg` file you'd rather use, please let me know!
+> This is a significant architectural upgrade. The app will now fetch data directly from the Shift2Bikes API and render it using native Compose components.
 
 ## Proposed Changes
 
-### Resources
+### Dependencies & Architecture
 
-#### [NEW] [ic_bike_logo.xml](file:///C:/Users/jarla/AndroidStudioProjects/PedalPalooza/app/src/main/res/drawable/ic_bike_logo.xml)
-- Create a new vector drawable featuring a bike icon.
+#### [MODIFY] [libs.versions.toml](file:///C:/Users/jarla/AndroidStudioProjects/PedalPalooza/gradle/libs.versions.toml)
+- Add Retrofit, OkHttp, and Kotlin Serialization for networking and JSON parsing.
 
-#### [MODIFY] [ic_launcher.xml](file:///C:/Users/jarla/AndroidStudioProjects/PedalPalooza/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml)
-#### [MODIFY] [ic_launcher_round.xml](file:///C:/Users/jarla/AndroidStudioProjects/PedalPalooza/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml)
-- Update the adaptive icon to use `@drawable/ic_bike_logo` as the foreground.
-- Optionally update the background color to a more vibrant "cycling" theme (e.g., a bright green).
+#### [MODIFY] [app build.gradle.kts](file:///C:/Users/jarla/AndroidStudioProjects/PedalPalooza/app/build.gradle.kts)
+- Add the new networking dependencies.
 
-### Logic
+### Data Layer
 
-#### [MODIFY] [MyFirebaseMessagingService.kt](file:///C:/Users/jarla/AndroidStudioProjects/PedalPalooza/app/src/main/java/com/example/pedalpalooza/MyFirebaseMessagingService.kt)
-- Update the notification small icon to use the new bike logo.
+#### [NEW] [ShiftApiService.kt](file:///C:/Users/jarla/AndroidStudioProjects/PedalPalooza/app/src/main/java/com/example/pedalpalooza/data/ShiftApiService.kt)
+- Define the Retrofit interface for `https://www.shift2bikes.org/api/search.php`.
+
+#### [NEW] [EventModels.kt](file:///C:/Users/jarla/AndroidStudioProjects/PedalPalooza/app/src/main/java/com/example/pedalpalooza/data/EventModels.kt)
+- Define data classes for the API response (Event, Venue, Pagination).
+
+### UI Layer (Native)
+
+#### [NEW] [EventListScreen.kt](file:///C:/Users/jarla/AndroidStudioProjects/PedalPalooza/app/src/main/java/com/example/pedalpalooza/ui/EventListScreen.kt)
+- Implement a `LazyColumn` that displays events grouped by date.
+- Create a `EventCard` component with:
+    - Title, Time, and Location.
+    - "Add to Google Calendar" button.
+    - Click to open full details (via the existing WebView or a new native detail screen).
+
+#### [NEW] [CalendarUtils.kt](file:///C:/Users/jarla/AndroidStudioProjects/PedalPalooza/app/src/main/java/com/example/pedalpalooza/utils/CalendarUtils.kt)
+- Helper to generate Google Calendar URLs (`https://www.google.com/calendar/render?action=TEMPLATE...`).
+
+### Main Integration
+
+#### [MODIFY] [MainActivity.kt](file:///C:/Users/jarla/AndroidStudioProjects/PedalPalooza/app/src/main/java/com/example/pedalpalooza/MainActivity.kt)
+- Add a `NavigationSuiteScaffold` (from Material 3) or a simple toggle to switch between the **Native List** and the **Full Website (WebView)**.
 
 ## Verification Plan
 
+### Automated Tests
+- Verify successful build.
+- (Optional) Unit tests for JSON parsing logic.
+
 ### Manual Verification
-- Deploy the app to the emulator.
-- Verify the new icon appears on the home screen.
-- Send a test notification and verify the bike icon appears in the status bar.
+- Verify upcoming events load correctly in the native list.
+- Verify "Add to Google Calendar" button opens the Google Calendar app/web with correct details.
+- Verify switching between Web and Native views works seamlessly.

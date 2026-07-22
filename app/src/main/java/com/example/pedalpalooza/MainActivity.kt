@@ -21,35 +21,115 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.LinearProgressIndicator
-import androidx.compose.material3.Scaffold
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.CalendarMonth
+import androidx.compose.material.icons.filled.Web
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
+import androidx.navigation.NavType
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
+import com.example.pedalpalooza.ui.EventListScreen
 import com.example.pedalpalooza.ui.theme.PedalPaloozaTheme
 import com.google.firebase.messaging.FirebaseMessaging
+import java.net.URLEncoder
 
 class MainActivity : ComponentActivity() {
+    @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
             PedalPaloozaTheme {
+                val navController = rememberNavController()
+                val navBackStackEntry by navController.currentBackStackEntryAsState()
+                val currentRoute = navBackStackEntry?.destination?.route
+
                 NotificationPermissionHandler()
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    WebViewScreen(
-                        url = "https://www.shift2bikes.org/calendar/",
-                        modifier = Modifier.padding(innerPadding),
-                    )
+
+                Scaffold(
+                    modifier = Modifier.fillMaxSize(),
+                    topBar = {
+                        TopAppBar(
+                            title = {
+                                Text(
+                                    if (currentRoute?.startsWith("web") == true) "Event Details"
+                                    else if (currentRoute == "list") "PedalPalooza Calendar"
+                                    else "Shift2Bikes"
+                                )
+                            },
+                            navigationIcon = {
+                                if (currentRoute?.startsWith("web") == true) {
+                                    IconButton(onClick = { navController.popBackStack() }) {
+                                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                                    }
+                                }
+                            }
+                        )
+                    },
+                    bottomBar = {
+                        NavigationBar {
+                            NavigationBarItem(
+                                icon = { Icon(Icons.Default.CalendarMonth, contentDescription = null) },
+                                label = { Text("Daily List") },
+                                selected = currentRoute == "list",
+                                onClick = {
+                                    if (currentRoute != "list") {
+                                        navController.navigate("list") {
+                                            popUpTo("list") { inclusive = true }
+                                        }
+                                    }
+                                }
+                            )
+                            NavigationBarItem(
+                                icon = { Icon(Icons.Default.Web, contentDescription = null) },
+                                label = { Text("Website") },
+                                selected = currentRoute?.startsWith("web_root") == true,
+                                onClick = {
+                                    val rootUrl = URLEncoder.encode("https://www.shift2bikes.org/calendar/", "UTF-8")
+                                    navController.navigate("web_root/$rootUrl") {
+                                        launchSingleTop = true
+                                    }
+                                }
+                            )
+                        }
+                    }
+                ) { innerPadding ->
+                    NavHost(
+                        navController = navController,
+                        startDestination = "list",
+                        modifier = Modifier.padding(innerPadding)
+                    ) {
+                        composable("list") {
+                            EventListScreen { event ->
+                                val url = URLEncoder.encode(event.shareable ?: "https://www.shift2bikes.org/calendar/", "UTF-8")
+                                navController.navigate("web/$url")
+                            }
+                        }
+                        composable(
+                            route = "web/{url}",
+                            arguments = listOf(navArgument("url") { type = NavType.StringType })
+                        ) { backStackEntry ->
+                            val url = backStackEntry.arguments?.getString("url") ?: ""
+                            WebViewScreen(url = url)
+                        }
+                        composable(
+                            route = "web_root/{url}",
+                            arguments = listOf(navArgument("url") { type = NavType.StringType })
+                        ) { backStackEntry ->
+                            val url = backStackEntry.arguments?.getString("url") ?: ""
+                            WebViewScreen(url = url)
+                        }
+                    }
                 }
             }
         }

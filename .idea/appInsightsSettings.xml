@@ -8,10 +8,10 @@
             <InsightsFilterSettings>
               <option name="connection">
                 <ConnectionSetting>
-                  <option name="appId" value="PLACEHOLDER" />
-                  <option name="mobileSdkAppId" value="" />
-                  <option name="projectId" value="" />
-                  <option name="projectNumber" value="" />
+                  <option name="appId" value="com.example.pedalpalooza" />
+                  <option name="mobileSdkAppId" value="1:253464389621:android:9418a40964db6f306ee2bc" />
+                  <option name="projectId" value="pedalpalooza-f1e65" />
+                  <option name="projectNumber" value="253464389621" />
                 </ConnectionSetting>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />

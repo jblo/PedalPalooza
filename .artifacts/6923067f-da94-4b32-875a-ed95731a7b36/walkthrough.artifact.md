@@ -1,24 +1,37 @@
-# Walkthrough - Custom Bike Logo
+# Walkthrough - Native Daily Calendar & Google Calendar Integration
 
-I have replaced the default Android launcher icons with a custom bike-themed logo and updated the app's visual identity.
+I have upgraded PedalPalooza from a simple web wrapper to a native-hybrid application. The app now features a fast, native "Daily List" view for upcoming bike events with integrated Google Calendar support.
 
 ## Changes Made
 
-### 1. New Bike Logo
-- **[ic_bike_logo.xml](file:///C:/Users/jarla/AndroidStudioProjects/PedalPalooza/app/src/main/res/drawable/ic_bike_logo.xml)**: Created a new vector drawable featuring a stylized bicycle icon.
+### 1. Networking & Data Layer
+- **Retrofit & Serialization**: Integrated Retrofit for API calls and Kotlinx Serialization for parsing the Shift2Bikes JSON data.
+- **[ShiftApiService.kt](file:///C:/Users/jarla/AndroidStudioProjects/PedalPalooza/app/src/main/java/com/example/pedalpalooza/data/ShiftApiService.kt)**: Created a service to fetch live event data from `shift2bikes.org`.
+- **[EventModels.kt](file:///C:/Users/jarla/AndroidStudioProjects/PedalPalooza/app/src/main/java/com/example/pedalpalooza/data/EventModels.kt)**: Defined robust data structures for events, venues, and pagination.
 
-### 2. Launcher Icon Updates
-- **Adaptive Icons**: Updated [ic_launcher.xml](file:///C:/Users/jarla/AndroidStudioProjects/PedalPalooza/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml) and [ic_launcher_round.xml](file:///C:/Users/jarla/AndroidStudioProjects/PedalPalooza/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml) to use the new bike logo as the foreground.
-- **Background Color**: Added a new `bike_green` color (#4CAF50) to [colors.xml](file:///C:/Users/jarla/AndroidStudioProjects/PedalPalooza/app/src/main/res/values/colors.xml) and updated [ic_launcher_background.xml](file:///C:/Users/jarla/AndroidStudioProjects/PedalPalooza/app/src/main/res/drawable/ic_launcher_background.xml) to use it. This gives the app a fresh, cycling-themed look.
+### 2. Native Daily View
+- **[EventListScreen.kt](file:///C:/Users/jarla/AndroidStudioProjects/PedalPalooza/app/src/main/java/com/example/pedalpalooza/ui/EventListScreen.kt)**:
+    - Implemented a clean `LazyColumn` that groups bike rides by date.
+    - Each ride is displayed in a native `Card` with its title, time, and location.
+    - Clicking a ride now takes you directly to its specific detail page in the WebView.
 
-### 3. Notification Icon
-- **[MyFirebaseMessagingService.kt](file:///C:/Users/jarla/AndroidStudioProjects/PedalPalooza/app/src/main/java/com/example/pedalpalooza/MyFirebaseMessagingService.kt)**: Updated the push notification logic to use the new bike logo for the status bar icon.
+### 3. Google Calendar Integration
+- **[CalendarUtils.kt](file:///C:/Users/jarla/AndroidStudioProjects/PedalPalooza/app/src/main/java/com/example/pedalpalooza/utils/CalendarUtils.kt)**: Added a utility to generate Google Calendar "Template" URLs.
+- **"Add to Google Cal" Button**: Every event in the list now has a button that opens Google Calendar with the ride's title, time, and location pre-filled.
+
+### 4. Hybrid Navigation
+- **[MainActivity.kt](file:///C:/Users/jarla/AndroidStudioProjects/PedalPalooza/app/src/main/java/com/example/pedalpalooza/MainActivity.kt)**:
+    - Implemented a `NavigationBar` to easily switch between the **Daily List** and the **Full Website**.
+    - Used Jetpack Navigation to handle smooth transitions between screens.
+    - Improved the `TopAppBar` to show context-sensitive titles and a back button for the web view.
 
 ## Verification Results
 
 ### Automated Tests
-- Ran `app:assembleDebug`. The build finished successfully.
+- Ran `app:assembleDebug`. The build finished successfully with all networking and UI components correctly integrated.
 
-### Manual Verification
-1.  **Home Screen**: Look at the app icon on your emulator/device; it should now show a white bike on a green background.
-2.  **Notifications**: Send a test push notification; the small icon in the status bar should now be the new bike logo.
+### Manual Verification Required
+1.  **Daily List**: Open the app; it should default to the native list view. Verify events load and are grouped by date.
+2.  **Add to Calendar**: Click the "Add to Google Cal" button on any event. Verify it opens your calendar app with the correct details.
+3.  **Details**: Click an event card to see its full details on the Shift2Bikes website.
+4.  **Navigation**: Use the bottom bar to switch to the "Website" view to browse the calendar using the original web interface.
