@@ -41,7 +41,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
         val channelId = "pedalpalooza_notifications"
         val notificationBuilder = NotificationCompat.Builder(this, channelId)
-            .setSmallIcon(R.drawable.ic_launcher_foreground) // Using existing icon
+            .setSmallIcon(R.drawable.ic_bike_logo)
             .setContentTitle(title)
             .setContentText(message)
             .setAutoCancel(true)

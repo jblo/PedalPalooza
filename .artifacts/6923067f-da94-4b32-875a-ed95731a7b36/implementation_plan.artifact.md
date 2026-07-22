@@ -1,47 +1,33 @@
-# Add Push Notifications to PedalPalooza
+# Add Custom Bike Logo
 
-This plan outlines the integration of Firebase Cloud Messaging (FCM) to support push notifications. This adds significant native value to the app, aiding in Google Play Store approval.
+Replace the default Android launcher icons with a custom bike-themed logo.
 
 ## User Review Required
 
-> [!IMPORTANT]
-> **Firebase Console Action Required**: You will need to create a project in the [Firebase Console](https://console.firebase.google.com/), add an Android app with package name `com.example.pedalpalooza`, and download the `google-services.json` file.
->
-> You must place the `google-services.json` file into the `app/` directory of your project.
+> [!NOTE]
+> I will replace the default "Android" foreground with a stylized bike icon.
+> If you have a specific `.png` or `.svg` file you'd rather use, please let me know!
 
 ## Proposed Changes
 
-### Build Configuration
+### Resources
 
-#### [MODIFY] [root build.gradle.kts](file:///C:/Users/jarla/AndroidStudioProjects/PedalPalooza/build.gradle.kts)
-- Add the Google Services classpath/plugin.
+#### [NEW] [ic_bike_logo.xml](file:///C:/Users/jarla/AndroidStudioProjects/PedalPalooza/app/src/main/res/drawable/ic_bike_logo.xml)
+- Create a new vector drawable featuring a bike icon.
 
-#### [MODIFY] [app build.gradle.kts](file:///C:/Users/jarla/AndroidStudioProjects/PedalPalooza/app/build.gradle.kts)
-- Apply the `com.google.gms.google-services` plugin.
-- Add Firebase BOM and FCM dependencies.
+#### [MODIFY] [ic_launcher.xml](file:///C:/Users/jarla/AndroidStudioProjects/PedalPalooza/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml)
+#### [MODIFY] [ic_launcher_round.xml](file:///C:/Users/jarla/AndroidStudioProjects/PedalPalooza/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml)
+- Update the adaptive icon to use `@drawable/ic_bike_logo` as the foreground.
+- Optionally update the background color to a more vibrant "cycling" theme (e.g., a bright green).
 
-### Android Core
+### Logic
 
-#### [MODIFY] [AndroidManifest.xml](file:///C:/Users/jarla/AndroidStudioProjects/PedalPalooza/app/src/main/AndroidManifest.xml)
-- Add `POST_NOTIFICATIONS` permission.
-- Declare the `FirebaseMessagingService` implementation.
-
-#### [NEW] [MyFirebaseMessagingService.kt](file:///C:/Users/jarla/AndroidStudioProjects/PedalPalooza/app/src/main/java/com/example/pedalpalooza/MyFirebaseMessagingService.kt)
-- Handle incoming messages and display native notifications.
-- Create a notification channel on initialization.
-
-### UI & Logic
-
-#### [MODIFY] [MainActivity.kt](file:///C:/Users/jarla/AndroidStudioProjects/PedalPalooza/app/src/main/java/com/example/pedalpalooza/MainActivity.kt)
-- Implement a runtime permission request for notifications (required for Android 13+).
-- Log the FCM token for testing purposes.
+#### [MODIFY] [MyFirebaseMessagingService.kt](file:///C:/Users/jarla/AndroidStudioProjects/PedalPalooza/app/src/main/java/com/example/pedalpalooza/MyFirebaseMessagingService.kt)
+- Update the notification small icon to use the new bike logo.
 
 ## Verification Plan
 
-### Automated Tests
-- Verify build with `./gradlew app:assembleDebug`.
-
 ### Manual Verification
-1.  **Permission Request**: Launch the app and verify that a notification permission dialog appears (on Android 13+).
-2.  **Token Generation**: Check Logcat for the FCM token.
-3.  **Test Message**: Use the Firebase Console "Messaging" tab to send a test notification using the logged token.
+- Deploy the app to the emulator.
+- Verify the new icon appears on the home screen.
+- Send a test notification and verify the bike icon appears in the status bar.
