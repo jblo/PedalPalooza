@@ -1,6 +1,6 @@
 # PedalPalooza
 
-PedalPalooza is a lightweight Android web wrapper for the [Shift2Bikes Calendar](https://www.shift2bikes.org/calendar/), designed to provide a dedicated, easy-to-access experience for Portland's cycling community.
+PedalPalooza is a lightweight Android app for the [Shift2Bikes Calendar](https://www.shift2bikes.org/calendar/), designed to provide a dedicated, easy-to-access experience for Portland's cycling community.
 
 ## 🚲 Features
 
@@ -8,6 +8,7 @@ PedalPalooza is a lightweight Android web wrapper for the [Shift2Bikes Calendar]
 - **Native Navigation**: Supports the system back button and gestures to navigate through your browsing history.
 - **Modern UI**: Built with Jetpack Compose and Material 3 for a sleek, edge-to-edge look.
 - **Lightweight**: Minimal app footprint, focusing purely on the calendar experience.
+- **Notifications** Select the rides you want, the app will notify you.
 
 ## 🛠️ Tech Stack
 
