@@ -1,15 +1,19 @@
 package com.example.pedalpalooza
 
+import android.Manifest
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Build
 import android.util.Log
 import androidx.core.app.NotificationCompat
+import androidx.core.content.ContextCompat
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
+import java.util.concurrent.atomic.AtomicInteger
 
 class MyFirebaseMessagingService : FirebaseMessagingService() {
 
@@ -23,23 +27,48 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         super.onMessageReceived(remoteMessage)
         Log.d("FCM", "From: ${remoteMessage.from}")
 
-        // Check if message contains a notification payload.
-        remoteMessage.notification?.let {
-            Log.d("FCM", "Message Notification Body: ${it.body}")
-            showNotification(it.title ?: "PedalPalooza", it.body ?: "")
+        val title = remoteMessage.notification?.title
+            ?: remoteMessage.data["title"]
+        val body = remoteMessage.notification?.body
+            ?: remoteMessage.data["body"]
+            ?: remoteMessage.data["message"]
+        val url = remoteMessage.data["url"]
+
+        if (!title.isNullOrBlank() || !body.isNullOrBlank()) {
+            Log.d("FCM", "Message Notification Body: $body")
+            showNotification(
+                title = title?.takeIf { it.isNotBlank() } ?: "PedalPalooza",
+                message = body.orEmpty(),
+                url = url
+            )
         }
     }
 
-    private fun showNotification(title: String, message: String) {
+    private fun showNotification(title: String, message: String, url: String? = null) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+            ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.POST_NOTIFICATIONS
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            return
+        }
+
+        val notificationId = nextNotificationId.getAndIncrement()
         val intent = Intent(this, MainActivity::class.java).apply {
-            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)
+            if (!url.isNullOrBlank()) {
+                putExtra(EXTRA_NOTIFICATION_URL, url)
+            }
         }
         val pendingIntent = PendingIntent.getActivity(
-            this, 0, intent,
+            this,
+            notificationId,
+            intent,
             PendingIntent.FLAG_ONE_SHOT or PendingIntent.FLAG_IMMUTABLE
         )
 
-        val channelId = "pedalpalooza_notifications"
+        val channelId = CHANNEL_ID
         val notificationBuilder = NotificationCompat.Builder(this, channelId)
             .setSmallIcon(R.drawable.ic_bike_logo)
             .setContentTitle(title)
@@ -58,6 +87,12 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             notificationManager.createNotificationChannel(channel)
         }
 
-        notificationManager.notify(0, notificationBuilder.build())
+        notificationManager.notify(notificationId, notificationBuilder.build())
+    }
+
+    companion object {
+        const val CHANNEL_ID = "pedalpalooza_notifications"
+        const val EXTRA_NOTIFICATION_URL = "extra_notification_url"
+        private val nextNotificationId = AtomicInteger(1)
     }
 }

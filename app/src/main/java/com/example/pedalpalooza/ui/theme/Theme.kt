@@ -1,6 +1,5 @@
 package com.example.pedalpalooza.ui.theme
 
-import android.app.Activity
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
@@ -12,25 +11,33 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 
 private val DarkColorScheme = darkColorScheme(
-    primary = Purple80,
-    secondary = PurpleGrey80,
-    tertiary = Pink80
+    primary = BikeGreen80,
+    onPrimary = OnBikeGreen80,
+    primaryContainer = BikeGreenContainer80,
+    onPrimaryContainer = OnBikeGreenContainer80,
+    secondary = PnwTeal80,
+    onSecondary = OnPnwTeal80,
+    secondaryContainer = PnwTealContainer80,
+    onSecondaryContainer = OnPnwTealContainer80,
+    tertiary = SunsetOrange80,
+    onTertiary = OnSunsetOrange80,
+    tertiaryContainer = SunsetOrangeContainer80,
+    onTertiaryContainer = OnSunsetOrangeContainer80
 )
 
 private val LightColorScheme = lightColorScheme(
-    primary = Purple40,
-    secondary = PurpleGrey40,
-    tertiary = Pink40
-
-    /* Other default colors to override
-    background = Color(0xFFFFFBFE),
-    surface = Color(0xFFFFFBFE),
-    onPrimary = Color.White,
-    onSecondary = Color.White,
-    onTertiary = Color.White,
-    onBackground = Color(0xFF1C1B1F),
-    onSurface = Color(0xFF1C1B1F),
-    */
+    primary = BikeGreen40,
+    onPrimary = OnBikeGreen40,
+    primaryContainer = BikeGreenContainer40,
+    onPrimaryContainer = OnBikeGreenContainer40,
+    secondary = PnwTeal40,
+    onSecondary = OnPnwTeal40,
+    secondaryContainer = PnwTealContainer40,
+    onSecondaryContainer = OnPnwTealContainer40,
+    tertiary = SunsetOrange40,
+    onTertiary = OnSunsetOrange40,
+    tertiaryContainer = SunsetOrangeContainer40,
+    onTertiaryContainer = OnSunsetOrangeContainer40
 )
 
 @Composable
